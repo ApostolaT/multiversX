@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"encoding/hex"
+	"fmt"
 	"github.com/multiversx/mx-chain-crypto-go/signing"
 	"github.com/multiversx/mx-chain-crypto-go/signing/ed25519"
 	logger "github.com/multiversx/mx-chain-logger-go"
@@ -10,7 +12,6 @@ import (
 	"github.com/multiversx/mx-sdk-go/builders"
 	"github.com/multiversx/mx-sdk-go/core"
 	"github.com/multiversx/mx-sdk-go/interactors"
-	"strconv"
 	"time"
 )
 
@@ -71,20 +72,32 @@ func main() {
 		return
 	}
 	log.Info(
-		"transaction metadata",
+		"transaction metadata after creation",
 		"chainId", tx.ChainID,
-		"gasLimit", tx.GasLimit,
-		"gasPrice", tx.GasPrice,
+		"gasLimit", netConfigs.MinGasLimit,
+		"gasPrice", netConfigs.MinGasPrice,
 		"nonce", tx.Nonce,
 	)
 
-	receiverAsBech32String, err := address.AddressAsBech32String()
-	if err != nil {
-		log.Error("unable to get receiver address as bech 32 string", "error", err)
-		return
-	}
-	tx.Receiver = receiverAsBech32String // send to self
-	tx.Value = strconv.Itoa(EGLD)        // 1EGLD
+	//tx.Receiver = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u" // send to self
+	//tx.Value = "50000000000000000"                                                 // 0.05EGLD
+	//tx.GasLimit = 60000000
+	//
+	//tx.Data = []byte{}
+	//tx.Data = append(tx.Data, []byte("issueNonFungible")...)
+	//name := hex.EncodeToString([]byte("AlexeiToken1"))
+	//tx.Data = append(tx.Data, append([]byte("@"), name...)...)
+	//
+	//ticker := hex.EncodeToString([]byte("ALC"))
+	//tx.Data = append(tx.Data, append([]byte("@"), ticker...)...)
+	//log.Info(
+	//	"transaction metadata when set",
+	//	"chainId", tx.ChainID,
+	//	"gasLimit", tx.GasLimit,
+	//	"gasPrice", tx.GasPrice,
+	//	"nonce", tx.Nonce,
+	//	"data", string(tx.Data),
+	//)
 
 	holder, _ := cryptoProvider.NewCryptoComponentsHolder(keyGen, privateKey)
 	txBuilder, err := builders.NewTxBuilder(cryptoProvider.NewSigner())
@@ -99,31 +112,100 @@ func main() {
 		return
 	}
 
+	//err = ti.ApplyUserSignature(holder, &tx)
+	//if err != nil {
+	//	log.Error("error signing transaction", "error", err)
+	//	return
+	//}
+
+	//response, err := ti.SendTransaction(context.Background(), &tx)
+	//if err != nil {
+	//	log.Error("Error when sending the issueNonFungible transaction", "error", err)
+	//} else {
+	//	log.Info("Response from issueNonFungible transaction", "response", response)
+	//}
+
+	///
+
+	/** Step 2 fetch the smart contract response to fetch the ID*/
+
+	/** Step 3 setting roles of the NFT*/
+	//tokenIdentifier := "414c432d633936323136"
+	//
+	//tx.Receiver = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u"
+	//tx.Value = "0"
+	//tx.GasLimit = 60000000
+	//tx.Data = make([]byte, 0)
+	//tx.Data = append(tx.Data, append([]byte("setSpecialRole@"), tokenIdentifier...)...)
+	//tx.Data = append(tx.Data, []byte("@")...)
+	//addressObj := data.NewAddressFromBytes(address.AddressBytes())
+	//tx.Data = append(tx.Data, hex.EncodeToString(addressObj.AddressBytes())...)
+	//tx.Data = append(tx.Data, append([]byte("@"), hex.EncodeToString([]byte("ESDTRoleNFTCreate"))...)...)
+	//log.Info(
+	//	"transaction metadata when set",
+	//	"chainId", tx.ChainID,
+	//	"gasLimit", tx.GasLimit,
+	//	"gasPrice", tx.GasPrice,
+	//	"nonce", tx.Nonce,
+	//	"data", string(tx.Data),
+	//)
+	//
+	//err = ti.ApplyUserSignature(holder, &tx)
+	//if err != nil {
+	//	log.Error("error signing transaction", "error", err)
+	//	return
+	//}
+	//
+	//hash, err := ti.SendTransaction(context.Background(), &tx)
+	//if err != nil {
+	//	log.Error("Error when sending the issueNonFungible transaction", "error", err)
+	//} else {
+	//	log.Info("Response from issueNonFungible transaction", "hashes", hash)
+	//}
+
+	/** Step 4 Creating the NFT*/
+	tokenIdentifier := "414c432d633936323136"
+
+	tx.Receiver, _ = address.AddressAsBech32String()
+	tx.Value = "0"
+	tx.Data = make([]byte, 0)
+	//FUNCTION NAME + @identifier
+	tx.Data = append(tx.Data, append([]byte("ESDTNFTCreate@"), tokenIdentifier...)...)
+	//NFT @ QUANTITY
+	tx.Data = append(tx.Data, []byte("@01@")...)
+	//NFT @ NAME
+	tx.Data = append(tx.Data, hex.EncodeToString([]byte("NFTFromCode"))...)
+	//Royalties @ 1500 = 15%
+	tx.Data = append(tx.Data, []byte("@")...)
+	tx.Data = fmt.Append(tx.Data, 1500)
+	//HASH @ 11
+	tx.Data = append(tx.Data, append([]byte("@"), hex.EncodeToString([]byte("11"))...)...)
+	//Attribures @ tags:simple image;metadata:QmPK9U7pcdrJqNyaR484454GmR43kvKTXJkxnG2pPcSjnj
+	tx.Data = append(tx.Data, append([]byte("@"), hex.EncodeToString([]byte("tags:simple image;metadata:QmPK9U7pcdrJqNyaR484454GmR43kvKTXJkxnG2pPcSjnj"))...)...)
+	//URI @
+	tx.Data = append(tx.Data, append([]byte("@"), hex.EncodeToString([]byte("https://ipfs.io/ipfs/Qmeze4Qq5FjBnZBhsNGb8pEZJe5SU7SKfwAXX827wLGx7g"))...)...)
+	tx.GasLimit = 3000000 + (uint64(len(tx.Data)) * 1500)
+	log.Info(
+		"transaction metadata when set",
+		"chainId", tx.ChainID,
+		"gasLimit", tx.GasLimit,
+		"gasPrice", tx.GasPrice,
+		"nonce", tx.Nonce,
+		"data", string(tx.Data),
+	)
+
 	err = ti.ApplyUserSignature(holder, &tx)
 	if err != nil {
 		log.Error("error signing transaction", "error", err)
 		return
 	}
-	ti.AddTransaction(&tx)
 
-	// a new transaction with the signature done on the hash of the transaction
-	// it's ok to reuse the arguments here, they will be copied, anyway
-	tx.Version = 2
-	tx.Options = 1
-	tx.Nonce++ // do not forget to increment the nonce, otherwise you will get 2 transactions
-	// with the same nonce (only one of them will get executed)
-	err = ti.ApplyUserSignature(holder, &tx)
+	hash, err := ti.SendTransaction(context.Background(), &tx)
 	if err != nil {
-		log.Error("error creating transaction", "error", err)
-		return
-	}
-	ti.AddTransaction(&tx)
-
-	hashes, err := ti.SendTransactionsAsBunch(context.Background(), 100)
-	if err != nil {
-		log.Error("error sending transaction", "error", err)
-		return
+		log.Error("Error when sending the issueNonFungible transaction", "error", err)
+	} else {
+		log.Info("Response from issueNonFungible transaction", "hashes", hash)
 	}
 
-	log.Info("transactions sent", "hashes", hashes)
+	return
 }
