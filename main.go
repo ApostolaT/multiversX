@@ -12,10 +12,9 @@ import (
 	"github.com/multiversx/mx-sdk-go/builders"
 	"github.com/multiversx/mx-sdk-go/core"
 	"github.com/multiversx/mx-sdk-go/interactors"
+	"math/big"
 	"time"
 )
-
-const EGLD = 1000000000000000000
 
 var (
 	suite  = ed25519.NewEd25519()
@@ -29,18 +28,34 @@ func main() {
 	w := interactors.NewWallet()
 
 	//Loading public/private key
-	privateKey, err := w.LoadPrivateKeyFromJsonFile("./resources/u1.json", "43_;;_aXXPxBH#8")
+	privateKey1, err := w.LoadPrivateKeyFromJsonFile("./resources/u1.json", "43_;;_aXXPxBH#8")
 	if err != nil {
 		log.Error("Could not open the user1 private key", "error", err)
 	}
-	address, err := w.GetAddressFromPrivateKey(privateKey)
+	address, err := w.GetAddressFromPrivateKey(privateKey1)
+	if err != nil {
+		log.Error("Could not get address from private key", "error", err)
+		return
+	}
+	bech, _ := address.AddressAsBech32String()
+	log.Info("generated private/public key",
+		"private key1", privateKey1,
+		"address1 as hex", address.AddressBytes(),
+		"address1 as bech32", bech,
+	)
+
+	privateKey2, err := w.LoadPrivateKeyFromJsonFile("./resources/u2.json", "JVD]9:D6+ax~f-3")
+	if err != nil {
+		log.Error("Could not open the user1 private key", "error", err)
+	}
+	address2, err := w.GetAddressFromPrivateKey(privateKey2)
 	if err != nil {
 		log.Error("Could not get address from private key", "error", err)
 		return
 	}
 	log.Info("generated private/public key",
-		"private key", privateKey,
-		"address as hex", address.AddressBytes(),
+		"private key1", privateKey2,
+		"address1 as hex", address2.AddressBytes(),
 	)
 
 	////Transactions
@@ -99,7 +114,7 @@ func main() {
 	//	"data", string(tx.Data),
 	//)
 
-	holder, _ := cryptoProvider.NewCryptoComponentsHolder(keyGen, privateKey)
+	holder, _ := cryptoProvider.NewCryptoComponentsHolder(keyGen, privateKey1)
 	txBuilder, err := builders.NewTxBuilder(cryptoProvider.NewSigner())
 	if err != nil {
 		log.Error("unable to prepare the transaction creation arguments", "error", err)
@@ -130,7 +145,7 @@ func main() {
 	/** Step 2 fetch the smart contract response to fetch the ID*/
 
 	/** Step 3 setting roles of the NFT*/
-	//tokenIdentifier := "414c432d633936323136"
+	tokenIdentifier := "414c432d633936323136"
 	//
 	//tx.Receiver = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u"
 	//tx.Value = "0"
@@ -164,27 +179,64 @@ func main() {
 	//}
 
 	/** Step 4 Creating the NFT*/
-	tokenIdentifier := "414c432d633936323136"
+	//tx.Receiver, _ = address.AddressAsBech32String()
+	//tx.Value = "0"
+	//tx.Data = make([]byte, 0)
+	////FUNCTION NAME + @identifier
+	//tx.Data = append(tx.Data, append([]byte("ESDTNFTCreate@"), tokenIdentifier...)...)
+	////NFT @ QUANTITY
+	//tx.Data = append(tx.Data, []byte("@01@")...)
+	////NFT @ NAME
+	//tx.Data = append(tx.Data, hex.EncodeToString([]byte("NFTFromCode"))...)
+	////Royalties @ 1500 = 15%
+	//tx.Data = append(tx.Data, []byte("@")...)
+	//tx.Data = fmt.Append(tx.Data, 1500)
+	////HASH @ 11
+	//tx.Data = append(tx.Data, append([]byte("@"), hex.EncodeToString([]byte("11"))...)...)
+	////Attribures @ tags:simple image;metadata:QmPK9U7pcdrJqNyaR484454GmR43kvKTXJkxnG2pPcSjnj
+	//tx.Data = append(tx.Data, append([]byte("@"), hex.EncodeToString([]byte("tags:simple image;metadata:QmPK9U7pcdrJqNyaR484454GmR43kvKTXJkxnG2pPcSjnj"))...)...)
+	////URI @
+	//tx.Data = append(tx.Data, append([]byte("@"), hex.EncodeToString([]byte("https://ipfs.io/ipfs/Qmeze4Qq5FjBnZBhsNGb8pEZJe5SU7SKfwAXX827wLGx7g"))...)...)
+	//tx.GasLimit = 3000000 + (uint64(len(tx.Data)) * 1500)
+	//log.Info(
+	//	"transaction metadata when set",
+	//	"chainId", tx.ChainID,
+	//	"gasLimit", tx.GasLimit,
+	//	"gasPrice", tx.GasPrice,
+	//	"nonce", tx.Nonce,
+	//	"data", string(tx.Data),
+	//)
+	//
+	//err = ti.ApplyUserSignature(holder, &tx)
+	//if err != nil {
+	//	log.Error("error signing transaction", "error", err)
+	//	return
+	//}
 
+	//hash, err := ti.SendTransaction(context.Background(), &tx)
+	//if err != nil {
+	//	log.Error("Error when sending the issueNonFungible transaction", "error", err)
+	//} else {
+	//	log.Info("Response from issueNonFungible transaction", "hashes", hash)
+	//}
+
+	/** STEP 5 transfer **/
 	tx.Receiver, _ = address.AddressAsBech32String()
 	tx.Value = "0"
 	tx.Data = make([]byte, 0)
 	//FUNCTION NAME + @identifier
-	tx.Data = append(tx.Data, append([]byte("ESDTNFTCreate@"), tokenIdentifier...)...)
-	//NFT @ QUANTITY
-	tx.Data = append(tx.Data, []byte("@01@")...)
-	//NFT @ NAME
-	tx.Data = append(tx.Data, hex.EncodeToString([]byte("NFTFromCode"))...)
-	//Royalties @ 1500 = 15%
-	tx.Data = append(tx.Data, []byte("@")...)
-	tx.Data = fmt.Append(tx.Data, 1500)
-	//HASH @ 11
-	tx.Data = append(tx.Data, append([]byte("@"), hex.EncodeToString([]byte("11"))...)...)
-	//Attribures @ tags:simple image;metadata:QmPK9U7pcdrJqNyaR484454GmR43kvKTXJkxnG2pPcSjnj
-	tx.Data = append(tx.Data, append([]byte("@"), hex.EncodeToString([]byte("tags:simple image;metadata:QmPK9U7pcdrJqNyaR484454GmR43kvKTXJkxnG2pPcSjnj"))...)...)
-	//URI @
-	tx.Data = append(tx.Data, append([]byte("@"), hex.EncodeToString([]byte("https://ipfs.io/ipfs/Qmeze4Qq5FjBnZBhsNGb8pEZJe5SU7SKfwAXX827wLGx7g"))...)...)
-	tx.GasLimit = 3000000 + (uint64(len(tx.Data)) * 1500)
+	tx.Data = append(tx.Data, append([]byte("ESDTNFTTransfer@"), tokenIdentifier...)...)
+	//NONCE AFTER NFT @ nonce
+	tx.Data = fmt.Append(tx.Data, "@")
+	tx.Data = fmt.Append(tx.Data, hex.EncodeToString(big.NewInt(1).Bytes()))
+	//Quantity to transfer in HEX
+	tx.Data = fmt.Append(tx.Data, "@")
+	tx.Data = fmt.Append(tx.Data, hex.EncodeToString(big.NewInt(1).Bytes()))
+
+	//Destination Address @
+	tx.Data = fmt.Append(tx.Data, "@")
+	tx.Data = fmt.Append(tx.Data, hex.EncodeToString(address2.AddressBytes()))
+	tx.GasLimit = 1000000 + (uint64(len(tx.Data)) * 1500)
 	log.Info(
 		"transaction metadata when set",
 		"chainId", tx.ChainID,
