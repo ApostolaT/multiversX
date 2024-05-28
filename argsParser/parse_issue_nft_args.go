@@ -52,7 +52,7 @@ func ParseIssueNFTArgs(args []string) (IssueNFTArgs, error) {
 	}
 
 	issueNFTArgs.CollectionTicker = args[5]
-	if len(issueNFTArgs.CollectionTicker) < 3 {
+	if len(issueNFTArgs.CollectionTicker) != 3 {
 		return issueNFTArgs, errors.New("collection ticker too short, must be at least 3 characters")
 	}
 
