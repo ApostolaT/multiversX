@@ -210,6 +210,7 @@ var (
 func main() {
 	rootCmd.AddCommand(cmd.IssueNFT)
 	rootCmd.AddCommand(cmd.GetTokenID)
+	rootCmd.AddCommand(cmd.SetCreatorRole)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
