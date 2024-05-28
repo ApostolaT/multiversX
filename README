@@ -1,0 +1,11 @@
+This file was created to save some inputs for the commands created in the app:
+
+- issueNFT "example.json" "password" 0.05 60000000 AlexeiNFTFromCommand AFC
+- getTokenId 2251e473e0203825e3af5b8e76b515d15f41c92bc4d3595831d0d92ba361a00d
+- setCreatorRole "example.json" "password" 4146432d313033663465
+- createNFT "example.json" "password" 4146432d313033663465 cliNFTCreation
+- sendNFT "ex1.json" "pswd1" "ex2.json" "pswd2" 4146432d313033663465 1
+- getTransactionTrace 92d0fdffc560fc0daa0327bc2ee5b71c68690eff452d4c9fcfaa9f762394db20
+
+
+
