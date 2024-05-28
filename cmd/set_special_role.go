@@ -10,6 +10,7 @@ import (
 	"github.com/multiversx/mx-sdk-go/core"
 	"github.com/multiversx/mx-sdk-go/interactors"
 	"github.com/spf13/cobra"
+	"os"
 	"strconv"
 	"time"
 )
@@ -51,7 +52,7 @@ var (
 
 			/* Connect to proxy and init transaction*/
 			proxy, err := blockchain.NewProxy(blockchain.ArgsProxy{
-				ProxyURL:            "https://testnet-gateway.multiversx.com",
+				ProxyURL:            os.Getenv("PROXY_URL"),
 				Client:              nil,
 				SameScState:         false,
 				ShouldBeSynced:      false,
