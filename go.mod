@@ -3,6 +3,7 @@ module github.com/ApostolaT/multiversX
 go 1.21.6
 
 require (
+	github.com/joho/godotenv v1.5.1
 	github.com/multiversx/mx-chain-crypto-go v1.2.11
 	github.com/multiversx/mx-chain-logger-go v1.0.14
 	github.com/multiversx/mx-sdk-go v1.4.0

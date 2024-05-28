@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"github.com/ApostolaT/multiversX/argsParser"
 	"github.com/multiversx/mx-chain-crypto-go/signing"
 	"github.com/multiversx/mx-chain-crypto-go/signing/ed25519"
 	logger "github.com/multiversx/mx-chain-logger-go"
@@ -13,11 +14,9 @@ import (
 	"github.com/multiversx/mx-sdk-go/core"
 	"github.com/multiversx/mx-sdk-go/interactors"
 	"github.com/spf13/cobra"
-	"strconv"
+	"os"
 	"time"
 )
-
-const EGLD = 1000000000000000000
 
 var (
 	suite  = ed25519.NewEd25519()
@@ -25,23 +24,23 @@ var (
 	keyGen = signing.NewKeyGenerator(suite)
 
 	IssueNFT = &cobra.Command{
-		Use:   "issueNFT",
-		Short: "Command for issuing an NFT",
-		Long:  "Command for issuing an NFT ",
+		Use:     "issueNFT",
+		Short:   "Command for issuing an NFT",
+		Long:    "Command for issuing an NFT ",
+		Example: "issueNFT \"example.json\" \"password\" 0.05 60000000 AlexeiNFTFromCommand AFC",
 		Run: func(cmd *cobra.Command, args []string) {
-			if len(args) != 6 {
-				_ = cmd.Help()
+			issueNFTArgs, err := argsParser.ParseIssueNFTArgs(args)
+			if err != nil {
+				log.Error("Could not run issueNFT command", "error", err)
 				return
 			}
 
-			jsonFile := args[0]
-			password := args[1]
-
 			// Load wallet and key
 			w := interactors.NewWallet()
-			pk, err := w.LoadPrivateKeyFromJsonFile(jsonFile, password)
+			pk, err := w.LoadPrivateKeyFromJsonFile(issueNFTArgs.JsonFile, issueNFTArgs.Password)
 			if err != nil {
 				log.Error("Could not open the user1 private key", "error", err)
+				return
 			}
 			address, err := w.GetAddressFromPrivateKey(pk)
 			if err != nil {
@@ -60,7 +59,7 @@ var (
 
 			/* Connect to proxy and init transaction*/
 			proxy, err := blockchain.NewProxy(blockchain.ArgsProxy{
-				ProxyURL:            "https://testnet-gateway.multiversx.com",
+				ProxyURL:            os.Getenv("PROXY_URL"),
 				Client:              nil,
 				SameScState:         false,
 				ShouldBeSynced:      false,
@@ -95,27 +94,13 @@ var (
 			}
 			/* Transaction initialized */
 
-			value := args[2]
-			v, err := strconv.ParseFloat(value, 64)
-			if err != nil {
-				log.Error("Could not convert argument value", "error", err)
-				return
-			}
-
-			gasLimit := args[3]
-			gl, err := strconv.Atoi(gasLimit)
-			if err != nil {
-				log.Error("Could not convert argument gasLimit", "error", err)
-				return
-			}
-
 			tx.Receiver = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u" // send to self
-			tx.Value = fmt.Sprintf("%d", uint64(v*EGLD))                                   // 1EGLD
-			tx.GasLimit = uint64(gl)
+			tx.Value = fmt.Sprintf("%d", issueNFTArgs.Value)                               // 1EGLD
+			tx.GasLimit = issueNFTArgs.GasLimit
 			tx.Data = []byte{}
 			tx.Data = fmt.Append(tx.Data, "issueNonFungible")
-			tx.Data = fmt.Append(tx.Data, "@", hex.EncodeToString([]byte(args[4]))) //Collection Name
-			tx.Data = fmt.Append(tx.Data, "@", hex.EncodeToString([]byte(args[5]))) //Collection Ticker
+			tx.Data = fmt.Append(tx.Data, "@", hex.EncodeToString([]byte(issueNFTArgs.CollectionName)))   //Collection Name
+			tx.Data = fmt.Append(tx.Data, "@", hex.EncodeToString([]byte(issueNFTArgs.CollectionTicker))) //Collection Ticker
 
 			holder, err := cryptoProvider.NewCryptoComponentsHolder(keyGen, pk)
 			if err != nil {

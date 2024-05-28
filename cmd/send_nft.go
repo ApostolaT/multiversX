@@ -94,15 +94,10 @@ var (
 			tx.Receiver, _ = address.AddressAsBech32String()
 			tx.Value = "0"
 			tx.Data = make([]byte, 0)
-			//FUNCTION NAME + @identifier
-			tx.Data = fmt.Append(tx.Data, "ESDTNFTTransfer@", tokenId)
-			//NONCE AFTER NFT @ nonce
-			tx.Data = fmt.Append(tx.Data, "@", hex.EncodeToString(big.NewInt(int64(nonce)).Bytes()))
-			//Quantity to transfer in HEX
-			tx.Data = fmt.Append(tx.Data, "@", hex.EncodeToString(big.NewInt(1).Bytes()))
-
-			//Destination Address @
-			tx.Data = fmt.Append(tx.Data)
+			tx.Data = fmt.Append(tx.Data, "ESDTNFTTransfer@", tokenId)                               //FUNCTION NAME + @identifier
+			tx.Data = fmt.Append(tx.Data, "@", hex.EncodeToString(big.NewInt(int64(nonce)).Bytes())) //NONCE AFTER NFT @ nonce
+			tx.Data = fmt.Append(tx.Data, "@", hex.EncodeToString(big.NewInt(1).Bytes()))            //Quantity to transfer in HEX
+			tx.Data = fmt.Append(tx.Data)                                                            //Destination Address @
 			tx.Data = fmt.Append(tx.Data, "@", hex.EncodeToString(address2.AddressBytes()))
 			tx.GasLimit = 1000000 + (uint64(len(tx.Data)) * 1500)
 			log.Info(
@@ -135,3 +130,9 @@ var (
 		},
 	}
 )
+
+//
+//type TransactionBuilder struct{}
+//
+//func (t TransactionBuilder) withX() TranscationBuilder {}
+//func (t TransactionBuilder) fromX()                    {}
