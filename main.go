@@ -27,6 +27,7 @@ func main() {
 	rootCmd.AddCommand(cmd.SetCreatorRole)
 	rootCmd.AddCommand(cmd.CreateNFT)
 	rootCmd.AddCommand(cmd.SendNFT)
+	rootCmd.AddCommand(cmd.GetTransactionTrace)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
