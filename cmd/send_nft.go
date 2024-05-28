@@ -130,9 +130,3 @@ var (
 		},
 	}
 )
-
-//
-//type TransactionBuilder struct{}
-//
-//func (t TransactionBuilder) withX() TranscationBuilder {}
-//func (t TransactionBuilder) fromX()                    {}
