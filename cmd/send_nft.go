@@ -8,6 +8,7 @@ import (
 	"github.com/multiversx/mx-sdk-go/blockchain/cryptoProvider"
 	"github.com/multiversx/mx-sdk-go/builders"
 	"github.com/multiversx/mx-sdk-go/core"
+	"github.com/multiversx/mx-sdk-go/data"
 	"github.com/multiversx/mx-sdk-go/interactors"
 	"github.com/spf13/cobra"
 	"math/big"
@@ -21,17 +22,16 @@ var (
 		Short: "Command for issuing an NFT",
 		Long:  "Command for issuing an NFT ",
 		Run: func(cmd *cobra.Command, args []string) {
-			if len(args) != 6 {
+			if len(args) != 5 {
 				_ = cmd.Help()
 				return
 			}
 
 			jsonFile := args[0]
 			password := args[1]
-			jsonFile2 := args[2]
-			password2 := args[3]
-			tokenId := args[4]
-			nonce, err := strconv.Atoi(args[5])
+			targetBech32Address := args[2]
+			tokenId := args[3]
+			nonce, err := strconv.Atoi(args[4])
 			if err != nil {
 				log.Error("Could not get nonce from the arguments list", "error", err)
 			}
@@ -48,11 +48,7 @@ var (
 				return
 			}
 
-			pk2, err := w.LoadPrivateKeyFromJsonFile(jsonFile2, password2)
-			if err != nil {
-				log.Error("Could not open the user1 private key", "error", err)
-			}
-			address2, err := w.GetAddressFromPrivateKey(pk2)
+			address2, err := data.NewAddressFromBech32String(targetBech32Address)
 			if err != nil {
 				log.Error("Could not get address from private key", "error", err)
 				return
