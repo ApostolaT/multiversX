@@ -211,6 +211,7 @@ func main() {
 	rootCmd.AddCommand(cmd.IssueNFT)
 	rootCmd.AddCommand(cmd.GetTokenID)
 	rootCmd.AddCommand(cmd.SetCreatorRole)
+	rootCmd.AddCommand(cmd.CreateNFT)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
