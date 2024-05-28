@@ -3,22 +3,23 @@ module github.com/ApostolaT/multiversX
 go 1.21.6
 
 require (
-	github.com/ethereum/go-ethereum v1.14.3
 	github.com/multiversx/mx-chain-crypto-go v1.2.11
 	github.com/multiversx/mx-chain-logger-go v1.0.14
 	github.com/multiversx/mx-sdk-go v1.4.0
+	github.com/spf13/cobra v1.8.0
 )
 
 require (
 	github.com/btcsuite/btcd/btcutil v1.1.3 // indirect
 	github.com/denisbrodbeck/machineid v1.0.1 // indirect
+	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v0.0.5-0.20220116011046-fa5810519dcb // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/golang-lru v0.6.0 // indirect
-	github.com/holiman/uint256 v1.2.4 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/mr-tron/base58 v1.2.0 // indirect
 	github.com/multiversx/concurrent-map v0.1.4 // indirect
 	github.com/multiversx/mx-chain-communication-go v1.0.14 // indirect
@@ -29,12 +30,14 @@ require (
 	github.com/pborman/uuid v1.2.1 // indirect
 	github.com/pelletier/go-toml v1.9.3 // indirect
 	github.com/shirou/gopsutil v3.21.11+incompatible // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20220721030215-126854af5e6d // indirect
 	github.com/tklauser/go-sysconf v0.3.12 // indirect
 	github.com/tklauser/numcpus v0.6.1 // indirect
 	github.com/tyler-smith/go-bip39 v1.1.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	golang.org/x/crypto v0.22.0 // indirect
+	golang.org/x/net v0.24.0 // indirect
 	golang.org/x/sys v0.19.0 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 )
